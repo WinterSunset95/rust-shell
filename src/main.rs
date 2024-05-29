@@ -22,6 +22,11 @@ fn main() {
 }
 
 fn command(input: String) -> String {
+    // Firstly, lets get the PATH environment variable
+    // We will use this for non-builtins
+    let path = env::var("PATH").unwrap();
+    let paths: Vec<&str> = path.split(":").collect();
+
     // Split the input into a vector of strings
     // The first element of the vector is the command
     // The rest of them are the arguments
@@ -49,9 +54,7 @@ fn command(input: String) -> String {
             return format!("{} is a shell builtin", args);
         } else {
             // For non-builtins
-            // We gonna need to check the PATH environment variable
-            let path = env::var("PATH").unwrap();
-            let paths: Vec<&str> = path.split(":").collect();
+            // We gonna need to check the paths
             for p in paths {
                 let file = format!("{}/{}", p, args);
                 // Check if the file is executable
@@ -61,11 +64,27 @@ fn command(input: String) -> String {
                     continue;
                 }
             }
-
             return format!("{} not found", args);
         }
-
     } else {
+        // Check if command is in PATH
+        for p in paths {
+            let file = format!("{}/{}", p, input[0]);
+            if std::fs::metadata(file.clone()).is_ok() {
+                // File is executable?
+                // Execute the command
+                let output = std::process::Command::new(file)
+                    .args(&input[1..])
+                    .output()
+                    .expect("Failed to execute command");
+                return String::from_utf8_lossy(&output.stdout).to_string();
+            } else {
+                // If the file is not executable, continue to the next path
+                continue;
+            }
+        }
+
+        // If the command is not found in PATH
         return format!("{}: command not found", input[0]);
     }
 }

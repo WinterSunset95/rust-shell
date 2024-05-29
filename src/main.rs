@@ -77,7 +77,16 @@ fn command(input: String) -> String {
                     .args(&input[1..])
                     .output()
                     .expect("Failed to execute command");
-                return String::from_utf8_lossy(&output.stdout).to_string();
+                let return_string = String::from_utf8_lossy(&output.stdout).to_string();
+                return format!("{}", return_string.trim());
+            } else if std::fs::metadata(input[0]).is_ok() {
+                // Command is not in PATH, but is executable
+                let output = std::process::Command::new(input[0])
+                    .args(&input[1..])
+                    .output()
+                    .expect("Failed to execute command");
+                let return_string = String::from_utf8_lossy(&output.stdout).to_string();
+                return format!("{}", return_string.trim());
             } else {
                 // If the file is not executable, continue to the next path
                 continue;

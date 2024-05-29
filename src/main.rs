@@ -21,9 +21,24 @@ fn main() {
         if input.trim() == "exit 0" {
             break;
         } else {
-            // Convert to string
-            let input = input.trim().to_string();
-            println!("{}: command not found", input);
+            let output = command(input);
+            println!("{}", output);
         }
+    }
+}
+
+fn command(input: String) -> String {
+    // Split the input into a vector of strings
+    // The first element of the vector is the command
+    // The rest of them are the arguments
+    let input: Vec<&str> = input.split_whitespace().collect();
+
+    // Command: echo
+    if input[0] == "echo" {
+        // Join the arguments into a single string
+        let output = input[1..].join(" ");
+        return output;
+    } else {
+        return format!("{}: command not found", input[0]);
     }
 }

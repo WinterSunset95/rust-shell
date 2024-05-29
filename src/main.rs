@@ -6,11 +6,25 @@ fn main() {
     // println!("Logs from your program will appear here!");
 
     // Uncomment this block to pass the first stage
-    print!("$ ");
-    io::stdout().flush().unwrap();
+    // print!("$ ");
+    // io::stdout().flush().unwrap();
 
     // Wait for user input
-    let stdin = io::stdin();
-    let mut input = String::new();
-    stdin.read_line(&mut input).unwrap();
+    // Infinite loop
+    loop {
+        print!("$ ");
+        io::stdout().flush().unwrap();
+
+        let stdin = io::stdin();
+        let mut input = String::new();
+        stdin.read_line(&mut input).unwrap();
+        if input.trim() == "exit" {
+            println!("Goodbye!");
+            break;
+        } else {
+            // Convert to string
+            let input = input.trim().to_string();
+            println!("{}: command not found", input);
+        }
+    }
 }

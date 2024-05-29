@@ -19,7 +19,6 @@ fn main() {
         let mut input = String::new();
         stdin.read_line(&mut input).unwrap();
         if input.trim() == "exit 0" {
-            println!("Goodbye!");
             break;
         } else {
             // Convert to string

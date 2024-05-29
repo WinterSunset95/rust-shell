@@ -33,11 +33,24 @@ fn command(input: String) -> String {
     // The rest of them are the arguments
     let input: Vec<&str> = input.split_whitespace().collect();
 
-    // Command: echo
+    // Below is a vector of currently supported commands
+    let commands = vec!["echo", "exit", "type"];
+
     if input[0] == "echo" {
+        // Command: echo
         // Join the arguments into a single string
         let output = input[1..].join(" ");
         return output;
+    } else if input[0] == "type" {
+        // Command: type
+        // We might have more than one argument, so we join them into a single string
+        let args = input[1..].join(" ");
+        // Check if the command is supported
+        if commands.contains(&args.as_str()) {
+            return format!("{} is a shell builtin", args);
+        } else {
+            return format!("{} not found", args);
+        }
     } else {
         return format!("{}: command not found", input[0]);
     }

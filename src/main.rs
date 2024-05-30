@@ -3,7 +3,6 @@ use std::io::{self, Write};
 use std::env;
 
 fn main() {
-
     // Infinite loop
     loop {
         print!("$ ");
@@ -16,7 +15,9 @@ fn main() {
             break;
         } else {
             let output = command(input);
-            println!("{}", output);
+            if output != "" {
+                println!("{}", output);
+            }
         }
     }
 }
@@ -34,7 +35,7 @@ fn command(input: String) -> String {
 
     // Below is a vector of currently supported commands
     // We will add more commands to this vector as we implement them
-    let commands = vec!["echo", "exit", "type"];
+    let commands = vec!["echo", "exit", "type", "cd"];
 
     if input[0] == "echo" {
 
@@ -65,6 +66,13 @@ fn command(input: String) -> String {
                 }
             }
             return format!("{} not found", args);
+        }
+    } else if input[0] == "cd" {
+        // Command: cd
+        let new_dir = input[1];
+        match env::set_current_dir(new_dir) {
+            Ok(_) => return "".to_string(),
+            Err(_e) => return format!("cd: {}: No such file or directory", new_dir),
         }
     } else {
         // Check if command is in PATH

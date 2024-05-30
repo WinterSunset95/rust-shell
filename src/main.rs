@@ -70,9 +70,24 @@ fn command(input: String) -> String {
     } else if input[0] == "cd" {
         // Command: cd
         let new_dir = input[1];
-        match env::set_current_dir(new_dir) {
-            Ok(_) => return "".to_string(),
-            Err(_e) => return format!("cd: {}: No such file or directory", new_dir),
+
+        if new_dir == "~" {
+            // if '~'
+            match env::set_current_dir(env::var("HOME").unwrap()) {
+                Ok(_) => return "".to_string(),
+                Err(_e) => return format!("cd: {}: No such file or directory", new_dir),
+            }
+        } else if new_dir == "-" {
+            // if '-'
+            match env::set_current_dir(env::var("OLDPWD").unwrap()) {
+                Ok(_) => return "".to_string(),
+                Err(_e) => return format!("cd: {}: No such file or directory", new_dir),
+            }
+        } else {
+            match env::set_current_dir(new_dir) {
+                Ok(_) => return "".to_string(),
+                Err(_e) => return format!("cd: {}: No such file or directory", new_dir),
+            }
         }
     } else {
         // Check if command is in PATH
